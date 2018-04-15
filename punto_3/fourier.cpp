@@ -1,6 +1,8 @@
 #include <iostream> 
 #include <fstream> 
 #include <string>
+#include <stdio.h>
+#include <math.h>
 
 using namespace std;
 
@@ -111,15 +113,58 @@ void llena_2( char* nombre_archivo, double **datos, int columnas, int filas){
   
 }
 
-					  
+// Funcion para la interpolacionde lagragne 
+double lagrange(double** col1, double **col2, int columnas, int filas){
+  double modificado[filas];
+  for(int i=0; i<filas;i++){
+    modificado[i] = 0.0;
+  for (int k=0; k<filas;k++){
+      double numero = 1.0;
+      for (int i=0; i<filas; i++){
+       double suma = col2[i][0];
+       for (int j=0; j<filas;j++){
+	 if (i != j){
+	       suma *= (col1[k] - col1[j])/(col1[i] - col1[j]);
+	       numero += suma;
+	       modificado[k] = numero-1;
+	     }
+	 }
+      }
+  }
+  return *modificado;
+  }
+}
+// Funcion para la transformada de Fourier, el metodo que hice en clase 
+
+double fourier(double** modificado, int filas){
+  double resultado[filas];
+  for(int i=0; i<filas;i++){
+      double real=0.0;
+      double imaginario=0.0;
+      for (int j=0; j<filas;j++){
+	  real += modificado[0][j] * cos((-2*3.14159*i*j)/filas);
+	  imaginario += modificado[0][j] * sin((-2*3.14159*i*j)/filas);
+	}
+      double raiz  = (real * real) + ( imaginario *  imaginario);
+      double norma = pow(raiz,0.5);
+      resultado[i] = norma;
+    }
+  return *resultado;
+}
+
+
 					  
 int main(int argc, char * argv[] ){
     int m=0, n=0;
     dimension_fila(argv[1],n);
     dimension_columna(argv[1],m);
     double **data;
-    //llena_1(argv[1], data, m, n);
+    cout<< "Columna 1 de los datos: " << endl;
+    llena_1(argv[1], data, m, n);
+    cout<< " "<< endl;
+    cout<< "Columna 2 de los datos: " << endl;
     llena_2(argv[1], data, m, n);
+    cout<<"Si logro pasar esas columnas por parametro a mis funciones lagrange y Fourier queda listo el punto :)"<<endl;
     return 0;
 
 }
