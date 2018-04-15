@@ -159,10 +159,10 @@ int main(int argc, char * argv[] ){
     dimension_fila(argv[1],n);
     dimension_columna(argv[1],m);
     double **data;
-    cout<< "Columna 1 de los datos: " << endl;
+    cout << "Tiempo: " << endl;
     llena_1(argv[1], data, m, n);
     cout<< " "<< endl;
-    cout<< "Columna 2 de los datos: " << endl;
+    cout<< "Funcion de tiempo: " << endl;
     llena_2(argv[1], data, m, n);
     cout<<"Si logro pasar esas columnas por parametro a mis funciones lagrange y Fourier queda listo el punto :)"<<endl;
     return 0;
