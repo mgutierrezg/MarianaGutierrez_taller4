@@ -31,41 +31,34 @@ def gauss():
     return formula
 
 def f_2d(mat):
-    global M,N
+	global M, N
+	M=(np.shape(mat)[0])
+	N=(np.shape(mat)[1])
+	lista =np.zeros((M,N), dtype= complex)
+	for k in range(M):
+		for l in range(N):
+			suma = 0.0
+			for i in range(M):
+				for j in range(N):
+					exponencial = np.exp(-2j*np.pi*(float(k*i)/M + float(l*j)/N))
+					suma += mat[i, j]* exponencial
+		        lista[l][k] = suma / M /N 
+	return lista
 
-    M=(np.shape(mat)[0])
-    N=(np.shape(mat)[1])
-	
-    lista= np.zeros((M,N), dtype=complex)
-	
-    for i in range (M):
 
-        for j in range(N):
-	    suma=0.0
-	    for a in range(M):
-		for b in range(N):
-		    x=((float(i*a)/M)+ (float(j*b)/N))
-		    suma += mat[a,b]*np.exp(-2j*np.pi*x)
-				
-	lista[i,j]=suma/M/N
-    return lista
-
-def inversa2d(mat):
-    global M,N
-    M=(np.shape(mat)[0])
-    N=(np.shape(mat)[1])
-    fourieri = np.zeros((M,N),dtype=float)
-    for a in range(M):
-        for b in range(N):
-            suma = 0.0
-            for i in range(M):
-                for j in range(N):
-                    x=(float(i*a)/M + float(j*b)/N) 
-                    suma += mat[i,j]*np.exp(2j*np.pi*x)
-        fourieri[a,b] = (suma.real)
-
-        return fourieri 
-
+def inversa_2d(fourier):
+	global M, N 
+        lista =np.zeros((M,N), dtype= float)
+	for i in range(M):
+		for j in range(N):
+			suma = 0.0
+			for k in range(M):
+				for l in range(N):
+					exponencial = np.exp(2j*np.pi*(float(k*i)/M + float(l*j)/N))
+					suma += fourier[l][k] * exponencial
+	  
+		        lista[i,j]= (suma.real)
+        return lista
 
 def altos(mat):
     global M,N
@@ -95,7 +88,7 @@ def ejecuta(alto_bajo):
         gauss1 = gauss()
         kernel = f_2d(gauss1)
         convol = kernel*alta
-        final = inversa2d(convol)
+        final = inversa_2d(convol)
         plt.imsave("altas.png", final[:,:],cmap= "gray")
     elif alto_bajo == "bajo":
         matriz = matriz_bn(imagen)
@@ -104,7 +97,7 @@ def ejecuta(alto_bajo):
         gauss1 = gauss()
         kernel = f_2d(gauss1)
         convol = kernel*baja
-        final = inversa2d(convol)
+        final = inversa_2d(convol)
         plt.imsave("bajas.png", final[:,:],cmap= "gray")
             
 ejecuta(alto_bajo)
