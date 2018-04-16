@@ -1,16 +1,19 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
+import sys
 #Funcion para caragar una imagen
+n_pixel_kernell = sys.argv[2]
+imagen = sys.argv[1]
 
-def matriz_bn():
+def matriz_bn(imagen):
     imagen = Image.open("imagen.png")
     negra = imagen.convert('L')
     negra.save("bk.png")
     matriz = plt.imread("bk.png")
     return matriz 
 
-matriz = matriz_bn()
+matriz = matriz_bn(imagen)
 M=(np.shape(matriz)[0])
 N=(np.shape(matriz)[1])
 
@@ -19,10 +22,9 @@ def gauss(n_pixel_kernell):
     x = np.linspace(0.0,N-1,N)
     y = np.linspace(0.0,M-1,M)
     x, y = np.meshgrid(x,y)
-    sigma = n_pixel_kernell
     m = 0.0
     d= (x*x+y*y)**0.5
-    formula = np.exp(-( (d-m)**2 / ( 2.0 * sigma**2 ) ) )
+    formula = np.exp(-( (d-m)**2 / ( 2.0 * n_pixel_kernell**2 ) ) )
 	
     return formula
 
@@ -44,7 +46,9 @@ def f_2d(mat):
 
 
 def inversa2d(fourier):
-    global M,N 
+    global M,N
+    M=(np.shape(matriz)[0])
+    N=(np.shape(matriz)[1])
     fourieri = np.zeros((M,N),dtype=float)
     for a in range(M):
         for b in range(N):
@@ -59,9 +63,10 @@ def inversa2d(fourier):
 
 
 #Aca se mete n_pixel_kernell
-matriz = matriz_bn()
+n_pixel_kernell = 2
+matriz = matriz_bn(imagen)
 ft_imagen = f_2d(matriz)
-gauss = gauss(1.0)
+gauss = gauss(n_pixel_kernell)
 kernel = f_2d(gauss)
 convol = kernel*ft_imagen
 final = inversa2d(kernel*ft_imagen)
