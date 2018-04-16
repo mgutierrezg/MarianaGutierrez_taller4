@@ -6,50 +6,63 @@ from PIL import Image
 def matriz_bn():
     imagen = Image.open("imagen.png")
     negra = imagen.convert('L')
-    negra.save("imagen.png")
-    matriz = plt.imread("imagen.png")
+    negra.save("bk.png")
+    matriz = plt.imread("bk.png")
     return matriz 
 
 matriz = matriz_bn()
-print matriz
+M=(np.shape(matriz)[0])
+N=(np.shape(matriz)[1])
 
-def fourier2d(matriz):
-    m = (np.shape(matriz)[0])
-    n = (np.shape(matriz)[1])
-    lista = np.zeros((m,n), dtype = np.complex)
-    M = range(m)
-    N = range(n)
-    for k in M:
-        for l in N:
+def gauss(n_pixel_kernell):
+    global M,N
+    x = np.linspace(0.0,N-1,N)
+    y = np.linspace(0.0,M-1,M)
+    x, y = np.meshgrid(x,y)
+    sigma = n_pixel_kernell
+    m = 0.0
+    d= (x*x+y*y)**0.5
+    formula = np.exp(-( (d-m)**2 / ( 2.0 * sigma**2 ) ) )
+	
+    return formula
+
+def f_2d(mat):
+    global M,N
+    lista = np.zeros((M,N),dtype=np.complex)
+    for k in range(M):
+        for l in range(N):
              suma = 0.0
-             for i in M:
-                 for j in N:
-                        x = ((float(k*i)/m) + (float(l*j)/n))
-                        suma += matriz[i,j]*np.exp(-2*l*np.pi*x)
+             for i in range(M):
+                 for j in range(N):
+                    expo = np.exp(-2j*np.pi*(float(k*i)/M + float(l*j)/N))
+                    suma += mat[i,j]*expo
         lista[k,l] = suma
 
     return lista
-print fourier2d(matriz)
+
 
 def inversa2d(fourier):
-    m = (np.shape(fourier)[0])
-    n = (np.shape(fourier)[1])
-    listai = np.zeros((m,n), dtype = np.complex)
-    M = range(m)
-    N = range(n)
-    for i in M:
-        for j in N:
-             suma = 0.0
-             for k in M:
-                 for l in N:
-                        x = ((float(k*i)/m) + (float(l*j)/n))
-                        suma += fourier[i,j]*np.exp(2*l*np.pi*x)
-        listai[i,j] = suma
+    global M,N 
+    fourieri = np.zeros((M,N),dtype=float)
+    for a in range(M):
+        for b in range(N):
+            suma = 0.0
+            for i in range(M):
+                for j in range(N):
+                    x=(float(i*a)/M + float(j*b)/N) 
+                    suma += fourier[i,j]*np.exp(2j*np.pi*x)
+        fourieri[a,b] = (suma.real)
 
-    return listai
-ft = fourier2d(matriz)
-print inversa2d(ft)
+        return fourieri 
 
 
+#Aca se mete n_pixel_kernell
+matriz = matriz_bn()
+ft_imagen = f_2d(matriz)
+gauss = gauss(1.0)
+kernel = f_2d(gauss)
+convol = kernel*ft_imagen
+final = inversa2d(kernel*ft_imagen)
+print final 
 
 
