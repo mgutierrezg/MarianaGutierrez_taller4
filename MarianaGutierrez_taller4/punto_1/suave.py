@@ -24,7 +24,7 @@ def gauss(n_pixel_kernell):
     x, y = np.meshgrid(x,y)
     m = 0.0
     d= (x*x+y*y)**0.5
-    formula = np.exp(-( (d-m)**2 / ( 2.0 * n_pixel_kernell**2 ) ) )
+    formula = np.exp(-( (d-m)**2 / ( 2.0 * float(n_pixel_kernell)**2.0 ) ) )
 	
     return formula
 
@@ -63,7 +63,6 @@ def inversa2d(fourier):
 
 
 #Aca se mete n_pixel_kernell
-n_pixel_kernell = 2
 matriz = matriz_bn(imagen)
 ft_imagen = f_2d(matriz)
 gauss = gauss(n_pixel_kernell)
