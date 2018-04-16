@@ -62,22 +62,19 @@ def inversa_2d(fourier):
 
 def altos(mat):
     global M,N
-    M=(np.shape(mat)[0])
-    N=(np.shape(mat)[1])
     for i in range(M):
         for j in range(N):
-            if (mat[i][j] <0.03):
+            if (mat[i][j] < 0.03):
                 mat[i][j] = 0
-        return mat[i][j]
+    return mat
+
 def bajos(mat):
     global M,N
-    M=(np.shape(mat)[0])
-    N=(np.shape(mat)[1])
     for i in range(M):
         for j in range(N):
             if (mat[i][j] >0.03):
                 mat[i][j] = 0
-        return mat[i][j]
+    return mat
 
 
 def ejecuta(alto_bajo):
