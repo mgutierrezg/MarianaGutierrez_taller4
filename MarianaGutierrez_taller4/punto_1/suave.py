@@ -63,8 +63,8 @@ def inversa_2d(fourier):
 #Aca se mete n_pixel_kernell
 matriz = matriz_bn(imagen)
 ft_imagen = f_2d(matriz)
-gauss = gauss(n_pixel_kernell)
-kernel = f_2d(gauss)
+gauss1 = gauss(n_pixel_kernell)
+kernel = f_2d(gauss1)
 convol = kernel*ft_imagen
 final = inversa_2d(kernel*ft_imagen)
 plt.imsave("suave.png", final[:,:],cmap= "gray")
