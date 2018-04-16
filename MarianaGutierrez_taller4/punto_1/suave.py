@@ -45,7 +45,7 @@ def f_2d(mat):
 		        lista[l][k] = suma / M /N 
 	return lista
 
-#codigo para la transformada inversa, retorna la imagen en formato matricial
+
 def inversa_2d(fourier):
 	global M, N 
         lista =np.zeros((M,N), dtype= float)
