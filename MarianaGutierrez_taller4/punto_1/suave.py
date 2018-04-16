@@ -30,25 +30,28 @@ def gauss(n_pixel_kernell):
 
 def f_2d(mat):
     global M,N
-    M=(np.shape(matriz)[0])
-    N=(np.shape(matriz)[1])
-    lista = np.zeros((M,N),dtype=np.complex)
-    for k in range(M):
-        for l in range(N):
-             suma = 0.0
-             for i in range(M):
-                 for j in range(N):
-                    expo = np.exp(-2j*np.pi*(float(k*i)/M + float(l*j)/N))
-                    suma += mat[i,j]*expo
-        lista[k,l] = suma/M/N
 
+    M=(np.shape(mat)[0])
+    N=(np.shape(mat)[1])
+	
+    lista= np.zeros((M,N), dtype=complex)
+	
+    for i in range (M):
+
+        for j in range(N):
+	    suma=0.0
+	    for a in range(M):
+		for b in range(N):
+		    x=((float(i*a)/M)+ (float(j*b)/N))
+		    suma += mat[a,b]*np.exp(-2j*np.pi*x)
+				
+	lista[i,j]=suma/M/N
     return lista
 
-
-def inversa2d(fourier):
+def inversa2d(mat):
     global M,N
-    M=(np.shape(matriz)[0])
-    N=(np.shape(matriz)[1])
+    M=(np.shape(mat)[0])
+    N=(np.shape(mat)[1])
     fourieri = np.zeros((M,N),dtype=float)
     for a in range(M):
         for b in range(N):
@@ -56,7 +59,7 @@ def inversa2d(fourier):
             for i in range(M):
                 for j in range(N):
                     x=(float(i*a)/M + float(j*b)/N) 
-                    suma += fourier[i,j]*np.exp(2j*np.pi*x)
+                    suma += mat[i,j]*np.exp(2j*np.pi*x)
         fourieri[a,b] = (suma.real)
 
         return fourieri 
