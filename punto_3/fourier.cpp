@@ -52,39 +52,10 @@ void borra(double** arreglo, int filas ){
     delete[] arreglo;
 }
 
-//Funcion para cargar la primera columna del archivo
-void cargar_columna1( char* nombre_archivo, double **datos, int columnas, int filas );
-void cargar_columna1( char* nombre_archivo, double **datos, int columnas, int filas ){
-    ifstream archivo(nombre_archivo);
-    double x[columnas*filas];
-    for( int i = 0; i < filas*columnas; i++){
-        archivo >> x[i];
-    }
-    
-    for( int i = 0; i < filas; i++){
-            datos[i][0] = x[i*columnas];
-    }
-  
-}
 
-//Funcion para llenar la primera columna, por medio de inicializa y cargar
-void llena_1( char* nombre_archivo, double **datos, int columnas, int filas);
-void llena_1( char* nombre_archivo, double **datos, int columnas, int filas){
-  datos = inicializa(filas);
-  cargar_columna1( nombre_archivo, datos, columnas, filas);
-  for(int i = 0; i < filas-1; i++ ){
-     for(int j =0; j< columnas-1; j++){
-       
-       cout<<datos[i][j]<< " " ;
-     }
-     cout<<endl;
-  }
-  borra( datos, filas);
-}
-
-//Lo mismo para la columna 2
-void cargar_columna2( char* nombre_archivo, double **datos, int columnas, int filas );
-void cargar_columna2( char* nombre_archivo, double **datos, int columnas, int filas ){
+//Funcion para cargar archivo
+void cargar( char* nombre_archivo, double **datos, int columnas, int filas );
+void cargar( char* nombre_archivo, double **datos, int columnas, int filas ){
     ifstream archivo(nombre_archivo);
     double x[columnas*filas];
     for( int i = 0; i < filas*columnas; i++){
@@ -93,18 +64,18 @@ void cargar_columna2( char* nombre_archivo, double **datos, int columnas, int fi
     
     for( int i = 0; i < filas; i++){
        for( int j = 0; j < columnas; j++){
-	 datos[i][0] = x[i*columnas +j];
+	 datos[i][j] = x[i*columnas +j];
 	      }
     }
   
 }
-
-void llena_2( char* nombre_archivo, double **datos, int columnas, int filas);
-void llena_2( char* nombre_archivo, double **datos, int columnas, int filas){
+// Esta funcion imprimer las dos columnas del archivo txt
+void llena( char* nombre_archivo, double **datos, int columnas, int filas);
+void llena( char* nombre_archivo, double **datos, int columnas, int filas){
   datos = inicializa(filas);
-  cargar_columna2( nombre_archivo, datos, columnas, filas);
+  cargar(nombre_archivo, datos, columnas, filas);
   for(int i = 0; i<filas-1; i++){
-    for(int j =0; j<columnas-1; j++){
+    for(int j =0; j<columnas; j++){
       cout<<datos[i][j]<< " " ;
     }
     cout<<endl;
@@ -113,60 +84,111 @@ void llena_2( char* nombre_archivo, double **datos, int columnas, int filas){
   
 }
 
-// Funcion para la interpolacionde lagragne 
-double lagrange(double** col1, double **col2, int columnas, int filas){
-  double modificado[filas];
-  for(int i=0; i<filas;i++){
-    modificado[i] = 0.0;
-  for (int k=0; k<filas;k++){
-      double numero = 1.0;
-      for (int i=0; i<filas; i++){
-       double suma = col2[i][0];
-       for (int j=0; j<filas;j++){
-	 if (i != j){
-	       suma *= (col1[k] - col1[j])/(col1[i] - col1[j]);
-	       numero += suma;
-	       modificado[k] = numero-1;
-	     }
-	 }
-      }
-  }
-  return *modificado;
-  }
-}
-// Funcion para la transformada de Fourier, el metodo que hice en clase 
-
-double fourier(double** modificado, int filas){
-  double resultado[filas];
-  for(int i=0; i<filas;i++){
-      double real=0.0;
-      double imaginario=0.0;
-      for (int j=0; j<filas;j++){
-	  real += modificado[0][j] * cos((-2*3.14159*i*j)/filas);
-	  imaginario += modificado[0][j] * sin((-2*3.14159*i*j)/filas);
-	}
-      double raiz  = (real * real) + ( imaginario *  imaginario);
-      double norma = pow(raiz,0.5);
-      resultado[i] = norma;
+//Funcion para hacer un linspace
+double* linspace(double*line, int a, int b, int N){
+    double delta =(b-a)/(N-1.0);
+    for (int i=0; i<N; i++){
+            line[i] = (i*delta);
     }
-  return *resultado;
+    return line;
+}
+
+// Funcion para la interpolacionde lagragne
+
+double* lagrange( double*col1, double* col2, double *x_mod, double* y_mod, int filas ){
+  for (int k =0; k<filas; k++){
+      double numero = 1.0;
+      for (int i= 0; i<filas; i++){
+	  double v = col2[i];
+	  for (int j=0; j<filas; j++){
+	    if (i != j){
+		  v = v*(x_mod[k] - col1[j])/(col1[i] - col1[j]);
+		  numero += v;
+		}
+	    }
+	}
+      y_mod[k] = numero -1.0;
+    }
+  return y_mod;
+}
+		  
+		 
+// Funcion para la transformada de Fourier separando real de iamginario 
+
+double * fourier_real(double* real, double* x_nuevo, double*y_nuevo, int filas){
+  for (int i = 0; i<filas;i++){
+    double numero_real = 0.0;
+    for (int j =0; j< filas;j++){
+      numero_real += y_nuevo[j] * cos((-2*3.14159*i*j)/filas);
+      real[j]= numero_real;
+      cout<<real[j]<<" "<<endl;
+	}
+    
+    }
+  return real;
+}
+
+double * fourier_imaginaria(double* imaginaria, double* x_nuevo, double*y_nuevo, int filas){
+  for (int i = 0; i<filas;i++){
+    double numero_imaginario = 0.0;
+    for (int j =0; j< filas;j++){
+      numero_imaginario += y_nuevo[j] * sin((-2*3.14159*i*j)/filas);
+      imaginaria[j]= numero_imaginario;
+      cout<<imaginaria[j]<<" "<<endl;
+	}
+    
+    }
+  return imaginaria;
 }
 
 
+		  
+double* frecuencias_f(double*frecuencias, double*real, double*imaginaria, int filas){
+  for(int i=0; i<filas;i++){
+      double raiz  = (real[i] * real[i]) + ( imaginaria[i] *  imaginaria[i]);
+      double norma = pow(raiz,0.5);
+      frecuencias[i] = norma;
+      cout<<imaginaria[i]<<" "<<endl;
+    }
+  return frecuencias;
+}
 					  
 int main(int argc, char * argv[] ){
     int m=0, n=0;
     dimension_fila(argv[1],n);
     dimension_columna(argv[1],m);
-    double **data;
-    cout << "Tiempo: " << endl;
-    llena_1(argv[1], data, m, n);
-    cout<< " "<< endl;
-    cout<< "Funcion de tiempo: " << endl;
-    llena_2(argv[1], data, m, n);
-    cout<<"Si logro pasar esas columnas por parametro a mis funciones lagrange y Fourier queda listo el punto :)"<<endl;
-    return 0;
+    double **datos;
+    //llena(argv[1], datos, m, n);
+    datos = inicializa(n);
+    cargar(argv[1],datos,m,n);
+    //Vamos a pasar cada columna a un array
 
-}
+    double x[n];
+    double y[n];
+    for (int i = 0; i<n-1; i++){
+      x[i] = datos[i][0];
+      y[i] = datos[i][1];
+    }
+    int filas = n-1;
+    double a = x[0];
+    double b = x[filas-1];
+    double x_mod[n];
+    linspace(x_mod, a, b, filas);
+    double y_mod[n];
+    lagrange( x, y, x_mod, y_mod, filas );
+    double real[filas];
+    double imaginaria[filas];
+    double frecuencias[filas];
+    cout << "Fourier parte real: "<<endl;
+    fourier_real(real, x_mod, y_mod, filas);
+    cout<< "  " <<endl; 
+    cout << "Fourier parte imaginaria: "<<endl;
+    fourier_imaginaria(imaginaria, x_mod, y_mod, filas);
+    cout<<" "<<endl;
+    cout<<"Frecuencias: "<<endl;
+    frecuencias_f(frecuencias, real, imaginaria, filas);
+    
+    
+ }
 
 
