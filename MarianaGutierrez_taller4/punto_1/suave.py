@@ -1,13 +1,15 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
+import cmath
 import sys
+
 #Funcion para caragar una imagen
 n_pixel_kernell = sys.argv[2]
 imagen = sys.argv[1]
 
 def matriz_bn(imagen):
-    imagen = Image.open("imagen.png")
+    imagen = Image.open(imagen)
     negra = imagen.convert('L')
     negra.save("bk.png")
     matriz = plt.imread("bk.png")
@@ -29,41 +31,34 @@ def gauss(n_pixel_kernell):
     return formula
 
 def f_2d(mat):
-    global M,N
+	global M, N
+	M=(np.shape(mat)[0])
+	N=(np.shape(mat)[1])
+	lista =np.zeros((M,N), dtype= complex)
+	for k in range(M):
+		for l in range(N):
+			suma = 0.0
+			for i in range(M):
+				for j in range(N):
+					exponencial = np.exp(-2j*np.pi*(float(k*i)/M + float(l*j)/N))
+					suma += mat[i, j]* exponencial
+		        lista[l][k] = suma / M /N 
+	return lista
 
-    M=(np.shape(mat)[0])
-    N=(np.shape(mat)[1])
-	
-    lista= np.zeros((M,N), dtype=complex)
-	
-    for i in range (M):
-
-        for j in range(N):
-	    suma=0.0
-	    for a in range(M):
-		for b in range(N):
-		    x=((float(i*a)/M)+ (float(j*b)/N))
-		    suma += mat[a,b]*np.exp(-2j*np.pi*x)
-				
-	lista[i,j]=suma/M/N
-    return lista
-
-def inversa2d(mat):
-    global M,N
-    M=(np.shape(mat)[0])
-    N=(np.shape(mat)[1])
-    fourieri = np.zeros((M,N),dtype=float)
-    for a in range(M):
-        for b in range(N):
-            suma = 0.0
-            for i in range(M):
-                for j in range(N):
-                    x=(float(i*a)/M + float(j*b)/N) 
-                    suma += mat[i,j]*np.exp(2j*np.pi*x)
-        fourieri[a,b] = (suma.real)
-
-        return fourieri 
-
+#codigo para la transformada inversa, retorna la imagen en formato matricial
+def inversa_2d(fourier):
+	global M, N 
+        lista =np.zeros((M,N), dtype= float)
+	for i in range(M):
+		for j in range(N):
+			suma = 0.0
+			for k in range(M):
+				for l in range(N):
+					exponencial = np.exp(2j*np.pi*(float(k*i)/M + float(l*j)/N))
+					suma += fourier[l][k] * exponencial
+	  
+		        lista[i,j]= (suma.real)
+        return lista
 
 #Aca se mete n_pixel_kernell
 matriz = matriz_bn(imagen)
@@ -71,7 +66,7 @@ ft_imagen = f_2d(matriz)
 gauss = gauss(n_pixel_kernell)
 kernel = f_2d(gauss)
 convol = kernel*ft_imagen
-final = inversa2d(kernel*ft_imagen)
+final = inversa_2d(kernel*ft_imagen)
 plt.imsave("suave.png", final[:,:],cmap= "gray")
 
 
