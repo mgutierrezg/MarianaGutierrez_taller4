@@ -131,21 +131,6 @@ double * fourier(double* real, double* imaginaria, double* x_nuevo, double*y_nue
   return real, imaginaria;
 }
 
-
-double * fourier_imaginaria(double* imaginaria, double* x_nuevo, double*y_nuevo, int filas){
-  for (int i = 0; i<filas;i++){
-    double numero_imaginario = 0.0;
-    for (int j =0; j< filas;j++){
-      numero_imaginario += y_nuevo[j] * sin((-2*3.14159*i*j)/filas);
-      imaginaria[j]= numero_imaginario;
-      cout<<imaginaria[j]<<" "<<endl;
-	}
-    
-    }
-  return imaginaria;
-}
-
-
 		  
 double* frecuencias_f(double*frecuencias, double*real, double*imaginaria, int filas){
   for(int i=0; i<filas;i++){
