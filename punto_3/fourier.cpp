@@ -115,18 +115,22 @@ double* lagrange( double*col1, double* col2, double *x_mod, double* y_mod, int f
 		 
 // Funcion para la transformada de Fourier separando real de iamginario 
 
-double * fourier_real(double* real, double* x_nuevo, double*y_nuevo, int filas){
+double * fourier(double* real, double* imaginaria, double* x_nuevo, double*y_nuevo, int filas){
   for (int i = 0; i<filas;i++){
     double numero_real = 0.0;
+    double numero_imaginario = 0.0;
     for (int j =0; j< filas;j++){
       numero_real += y_nuevo[j] * cos((-2*3.14159*i*j)/filas);
+      numero_imaginario += y_nuevo[j] * sin((-2*3.14159*i*j)/filas);
       real[j]= numero_real;
-      cout<<real[j]<<" "<<endl;
+      imaginaria[j]= numero_imaginario;
+      cout<<real[j]<<"  " << " " << imaginaria[j] <<endl;
 	}
     
     }
-  return real;
+  return real, imaginaria;
 }
+
 
 double * fourier_imaginaria(double* imaginaria, double* x_nuevo, double*y_nuevo, int filas){
   for (int i = 0; i<filas;i++){
@@ -179,16 +183,11 @@ int main(int argc, char * argv[] ){
     double real[filas];
     double imaginaria[filas];
     double frecuencias[filas];
-    cout << "Fourier parte real: "<<endl;
-    fourier_real(real, x_mod, y_mod, filas);
-    cout<< "  " <<endl; 
-    cout << "Fourier parte imaginaria: "<<endl;
-    fourier_imaginaria(imaginaria, x_mod, y_mod, filas);
-    cout<<" "<<endl;
-    cout<<"Frecuencias: "<<endl;
+    cout<< "Real" << "  " << "Imaginaria"<<endl; 
+    fourier(real,imaginaria, x_mod, y_mod, filas);
+    cout<< "Frecuencias"<<endl;
     frecuencias_f(frecuencias, real, imaginaria, filas);
-    
-    
+
  }
 
 
