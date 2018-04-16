@@ -28,6 +28,8 @@ def gauss(n_pixel_kernell):
 
 def f_2d(mat):
     global M,N
+    M=(np.shape(matriz)[0])
+    N=(np.shape(matriz)[1])
     lista = np.zeros((M,N),dtype=np.complex)
     for k in range(M):
         for l in range(N):
@@ -36,7 +38,7 @@ def f_2d(mat):
                  for j in range(N):
                     expo = np.exp(-2j*np.pi*(float(k*i)/M + float(l*j)/N))
                     suma += mat[i,j]*expo
-        lista[k,l] = suma
+        lista[k,l] = suma/M/N
 
     return lista
 
@@ -63,6 +65,6 @@ gauss = gauss(1.0)
 kernel = f_2d(gauss)
 convol = kernel*ft_imagen
 final = inversa2d(kernel*ft_imagen)
-print final 
+plt.imsave("suave.png", final[:,:],cmap= "gray")
 
 
