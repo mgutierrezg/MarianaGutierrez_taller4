@@ -137,7 +137,7 @@ double* frecuencias_f(double*frecuencias, double*real, double*imaginaria, int fi
       double raiz  = (real[i] * real[i]) + ( imaginaria[i] *  imaginaria[i]);
       double norma = pow(raiz,0.5);
       frecuencias[i] = norma;
-      cout<<imaginaria[i]<<" "<<endl;
+      cout<<frecuencias[i]<<" "<<endl;
     }
   return frecuencias;
 }
